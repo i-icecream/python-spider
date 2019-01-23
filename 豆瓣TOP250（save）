@@ -1,0 +1,32 @@
+import requests
+from bs4 import BeautifulSoup
+# 可以成功抓取电影的每个页面信息
+# 提取所需的TOP250电影名称
+def get_movies_name():
+    headers = {
+        'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.82 Safari/537.36',
+        'Host': 'movie.douban.com'
+    }
+    movie_list = []
+    for i in range(0, 10):
+        link = 'https://movie.douban.com/top250?start=' + str(i * 25)
+        r = requests.get(link, headers=headers, timeout=10)
+        print(str(i + 1), "页响应状态码:", r.status_code)
+
+
+        # 在获取HTML页面信息的前提下，用BS进行目标信息抓取
+        soup = BeautifulSoup(r.text, "lxml")
+        div_list = soup.find_all('div', class_='hd')
+        for each in div_list:
+            #Python strip() 方法用于移除字符串头尾指定的字符（默认为空格或换行符）或字符序列
+            movie = each.a.span.text.strip()
+            movie_list.append(movie)
+    for each in movie_list:
+        with open('豆瓣TOP250.txt','a',encoding = 'utf-8') as f:
+            f.write(each)
+            f.write('\n')
+            f.close()
+
+
+movie_list = get_movies_name()
+print(movie_list)
