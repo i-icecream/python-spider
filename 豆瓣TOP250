@@ -1,0 +1,19 @@
+import requests
+from bs4 import BeautifulSoup
+def get_movie_name():
+    headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36','Host': 'movie.douban.com'}
+    movie_list = []
+    for i in range(10):
+        link = 'https://movie.douban.com/top250?start='+str(i*25)+'&filter='
+        req = requests.get(link,headers=headers,timeout=10)
+        html = req.text
+        bf = BeautifulSoup(html,'lxml')
+        div_list = bf.find_all('div',class_='hd')
+        for each in div_list:
+            movie = each.a.span.text.strip()
+            movie_list.append(movie)
+    for each in movie_list:
+        print('\n')
+        print(each)
+    
+result = get_movie_name()
