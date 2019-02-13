@@ -60,7 +60,7 @@ for i in range(len(res)):
                 title = "异常"
                 print(e)
                 continue
-            file = "F:/csdn/" + str(title[0]) + '.txt'
+            file = "F:/csdn/" + re.sub("[A-Za-z0-9\!\%\[\]\,\。\+\、\--\//\-\_]", "",str(title[0])) + '.txt'
             html = urllib.request.urlopen(res[i][j])
             bs = BeautifulSoup(html)
             content_list = bs.findAll('div',{'id':'content_views'})
