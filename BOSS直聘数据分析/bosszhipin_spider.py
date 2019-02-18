@@ -1,6 +1,5 @@
 import csv
 import re
-import requests
 from time import sleep
 from random import uniform
 from urllib.parse import urlencode
@@ -16,8 +15,8 @@ class BOSS_spider():
         self.browser = webdriver.Chrome()
 
     def get_page(self,start_url=1,number=10):
-        base_url = 'https://www.zhipin.com/job_detail/?query=爬虫&'
-        for i in range(start_url,start_url+number):
+        base_url = 'https://www.zhipin.com/job_detail/?query=爬虫&scity=101020100&industry=&position='
+        for i in range(start_url, start_url+number):
             data = {
                 'page': i,
                 'ka': 'page-{}'.format(i)
@@ -35,7 +34,7 @@ class BOSS_spider():
             text = self.browser.page_source  # 页面提取
             self.get_job_url(text)  # 解析页面工作url链接
 
-    def get_job_url(self,text):
+    def get_job_url(self, text):
         url_list = []
         if text:
             soup = BS(text, 'lxml')
@@ -65,10 +64,10 @@ class BOSS_spider():
             self.browser.switch_to.window(self.browser.window_handles[0])  # 切换第一个页面
             self.parse_job(url)
 
-    def get_content(self,text):
+    def get_content(self, text):
         data = {}
         # res = requests.get(url1, headers=headers)
-        patten = re.compile('<p>城市：(.*?)<em class="vline"></em>经验：(.*?)<em class="vline"></em>学历：(.*?)</p>')
+        patten = re.compile('<p>(.*?)<em class="dolt"></em>(.*?)<em class="dolt"></em>(.*?)</p>')
         result = re.findall(patten, text)
         soup = BS(text, 'lxml')
         badge = soup.find('span', class_='badge')
@@ -77,7 +76,7 @@ class BOSS_spider():
         else:
             badge = None
         # company = soup.find('h3', class_='name').text
-        company = soup.find('h3',class_='name').text
+        company = soup.find('div', class_='name').text
         require1 = soup.find('div', class_='text')
         if require1:
             require = require1.text
@@ -124,4 +123,3 @@ if __name__ == '__main__':
     spider = BOSS_spider()
     # url = 'https://www.zhipin.com/job_detail/?query=python&scity=100010000&industry=&position='
     spider.start()
-
